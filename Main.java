@@ -12,11 +12,11 @@ class View {
 
     public View() {}
     public void setController(Controller ctrl) {this.ctrl = ctrl;}
-    public void startApp() throws InterruptedException { ctrl.run();}
+    public void stopApp() {ctrl.stopController();}
     public void doSomething(String message) {System.out.println(message);}
 }
 
-class Controller {
+class Controller extends Thread {
     enum STATUS {STARTED, STOPPED}
     STATUS status;
     View view;
@@ -26,22 +26,21 @@ class Controller {
         this.view = view;
         this.view.setController(this);
         this.model = model;
-        startController();
     }
 
-    public void run() throws InterruptedException {
-        int count = 0;
-        long someTime = (long)1000;
+    @Override
+    public void run() {
+        long ONE_SECOND = (long)1000;
+        startController();
         while (running()) {
             view.doSomething("Let's continue " + model.getName());
-            count += 1;
-            sleep(someTime);
-
-            if (count == 5) {
-                stopController();
-                view.doSomething("Let's stop " + model.getName());
+            try {
+                sleep(ONE_SECOND);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
+        view.doSomething("Let's stop " + model.getName());
     }
 
     public void startController() {
@@ -64,10 +63,13 @@ public class Main {
         myModel = new Model("Victor");
         myView = new View();
         myController = new Controller(myView, myModel);
+        myController.start();
+
         try {
-            myView.startApp();
+            sleep(5000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        myView.stopApp();
     }
 }
