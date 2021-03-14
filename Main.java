@@ -17,7 +17,7 @@ class View {
 }
 
 class Controller {
-    enum STATUS {START, STOP}
+    enum STATUS {STARTED, STOPPED}
     STATUS status;
     View view;
     Model model;
@@ -32,7 +32,7 @@ class Controller {
     public void run() throws InterruptedException {
         int count = 0;
         long someTime = (long)1000;
-        while (status == STATUS.START) {
+        while (running()) {
             view.doSomething("Let's continue " + model.getName());
             count += 1;
             sleep(someTime);
@@ -45,12 +45,14 @@ class Controller {
     }
 
     public void startController() {
-        status = STATUS.START;
+        status = STATUS.STARTED;
     }
 
     public void stopController() {
-        status = STATUS.STOP;
+        status = STATUS.STOPPED;
     }
+
+    boolean running() {return status == STATUS.STARTED;}
 }
 
 public class Main {
