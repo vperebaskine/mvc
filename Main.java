@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.lang.Thread.sleep;
 
@@ -32,7 +33,7 @@ class View {
     public View() {}
     public void setController(Controller ctrl) {this.ctrl = ctrl;}
     public void stopApp() {ctrl.stopController();}
-    public void doSomething(String message) {System.out.println(message);}
+    public void doSomething(String message) {MyLogger.logger.log(Level.INFO, message);}
 }
 
 class Controller extends Thread {
@@ -50,16 +51,19 @@ class Controller extends Thread {
     @Override
     public void run() {
         long ONE_SECOND = (long)1000;
+        String PROCEED = "Let's Continue " + model.getName();
+        String STOP = "Let's stop " + model.getName();
+
         startController();
         while (running()) {
-            view.doSomething("Let's continue " + model.getName());
+            view.doSomething(PROCEED);
             try {
                 sleep(ONE_SECOND);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        view.doSomething("Let's stop " + model.getName());
+        view.doSomething(STOP);
     }
 
     public void startController() {
@@ -82,6 +86,13 @@ public class Main {
         myModel = new Model("Victor");
         myView = new View();
         myController = new Controller(myView, myModel);
+
+        try {
+            MyLogger.setFileHandler();
+        } catch (SecurityException | IOException e) {
+            e.printStackTrace();
+        }
+
         myController.start();
 
         try {
