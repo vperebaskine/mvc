@@ -1,4 +1,23 @@
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
 import static java.lang.Thread.sleep;
+
+class MyLogger {
+    private static final String LOGGER_NAME = MyLogger.class.getName();
+    private static final String DEFAULT_LOGFILE_NAME = "mvc.log";
+    protected static final Logger logger = Logger.getLogger(LOGGER_NAME);
+
+    private MyLogger() {
+        throw new IllegalStateException(LOGGER_NAME);
+    }
+
+    public static void setFileHandler() throws SecurityException, IOException {
+        final Handler fh = new FileHandler(DEFAULT_LOGFILE_NAME, true);
+        logger.addHandler(fh);
+    }
+}
 
 class Model {
     String name;
