@@ -1,3 +1,3 @@
 Trying to learn some Java development tools and techniques
 Nothing fascinating here...
-Checking if auth method is working
+Checking if auth method is working with SSH
